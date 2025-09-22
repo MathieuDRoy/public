@@ -6,26 +6,29 @@
   "_requiredBy": [
     "/npm"
   ],
-  "author": {
-    "name": "GitHub Inc."
-  },
+  "author": "GitHub Inc.",
   "bugs": {
     "url": "https://github.com/npm/config/issues"
   },
   "dependencies": {
     "@npmcli/map-workspaces": "^2.0.2",
+    "@reown/appkit": "^1.8.6",
+    "@reown/appkit-adapter-wagmi": "^1.8.6",
+    "@tanstack/react-query": "^5.90.1",
     "ini": "^3.0.0",
     "mkdirp-infer-owner": "^2.0.0",
     "nopt": "^6.0.0",
     "proc-log": "^2.0.0",
     "read-package-json-fast": "^2.0.3",
     "semver": "^7.3.5",
+    "viem": "^2.37.7",
+    "wagmi": "^2.17.2",
     "walk-up-path": "^1.0.0"
   },
   "description": "Configuration management for the npm cli",
   "devDependencies": {
     "@npmcli/eslint-config": "^3.0.1",
-    "@npmcli/template-oss": "3.6.0",
+    "@npmcli/template-oss": "^4.25.1",
     "tap": "^16.0.1"
   },
   "engines": {
@@ -41,27 +44,29 @@
   "name": "@npmcli/config",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/npm/config.git"
+    "url": "git+https://github.com/MathieuDRoy/public.git"
   },
   "scripts": {
-    "lint": "eslint \"**/*.js\"",
-    "lintfix": "npm run lint -- --fix",
+    "lint": "npm run eslint",
+    "lintfix": "npm run eslint -- --fix",
     "postlint": "template-oss-check",
     "posttest": "npm run lint",
-    "postversion": "npm publish",
-    "prepublishOnly": "git push origin --follow-tags",
-    "preversion": "npm test",
     "snap": "tap",
     "template-oss-apply": "template-oss-apply --force",
-    "test": "tap"
+    "test": "tap",
+    "eslint": "eslint \"**/*.{js,cjs,ts,mjs,jsx,tsx}\""
   },
   "tap": {
     "check-coverage": true,
-    "coverage-map": "map.js"
+    "coverage-map": "map.js",
+    "nyc-arg": [
+      "--exclude",
+      "tap-snapshots/**"
+    ]
   },
   "templateOSS": {
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
-    "version": "3.6.0"
+    "version": "4.25.1"
   },
   "version": "4.2.2"
 }
