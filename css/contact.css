@@ -1,0 +1,132 @@
+html, body {
+    width: 100%;
+    margin: 0; 
+    padding: 0; 
+    overflow-x: hidden;
+    background-image: url("../iamges/cccircular (1).svg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #270c41;
+}
+
+.contactMe {
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+    color: #FEFEFE;
+    font-weight:500;
+    font-size: 48px;
+    position: absolute;
+    left: 33%;
+    top: 33%;
+}
+
+form { 
+    position: absolute;
+    left: 66%;
+    top: 25%;
+}
+
+label, input { float:left; display:block;}
+label        { clear:left; display:block; width:60px; }
+
+.feedback-input {
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+    background-color: #270c41;
+    color: #FEFEFE;
+    border-radius: 5px;
+    border:3px solid #FEFEFE;
+    line-height: 22px;
+    transition: all 0.3s;
+    padding: 10px;
+    margin-bottom: 20px;
+    width:100%;
+    box-sizing: border-box;
+    outline:0;
+    font-weight:500;
+    font-size: 18px;
+  }
+  
+  .feedback-label {
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+    background-color: #c9803e;
+    color: #FEFEFE;
+    line-height: 22px;
+    transition: all 0.3s;
+    padding: 10px;
+    margin-bottom: 20px;
+    width:100%;
+    box-sizing: border-box;
+    outline:0;
+    font-weight:500;
+    font-size: 18px;
+  }
+  
+  .feedback-input:focus { border:2px solid #c9803e; }
+
+.menuBar {
+    width: 10%;
+    margin: 0; 
+    padding: 0;
+    position: absolute;
+    left: 90%;
+    top: 5%;
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+    font-size: 25px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 24px; 
+    color: #c9803e;
+}
+
+textarea {
+    height: 150px;
+    line-height: 150%;
+    resize:vertical;
+}
+  
+[type="submit"] {
+font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+width: 100%;
+background:#FEFEFE;
+border-radius:5px;
+border:0;
+cursor:pointer;
+color: #c9803e ;
+font-size:24px;
+padding-top:10px;
+padding-bottom:10px;
+transition: all 0.3s;
+margin-top:-4px;
+font-weight:700;
+}
+[type="submit"]:hover { color: #270c41; background:#c9803e; }
+  
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 800px) {
+    .contactMe {
+      width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+      top: 15%;
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    .contact {
+      width: 200%; /* The width is 100%, when the viewport is 800px or smaller */
+      position: absolute;
+      top: 25%;
+      right: 15%;
+    }
+  }
+
+@media screen and (max-width: 800px) {
+.menuBar {
+    width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+    left: 70%;
+}
+}

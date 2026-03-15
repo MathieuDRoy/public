@@ -1,8 +1,5 @@
 # This file is automatically added by @npmcli/template-oss. Do not edit.
 
-# ignore everything in the root
-/*
-
 !**/.gitignore
 !/.commitlintrc.js
 !/.eslint.config.js
@@ -32,3 +29,9 @@
 !/test/
 !/tsconfig.json
 tap-testdir*/
+
+.gitignore
+node_modules
+eslint.config.mjs
+package.json
+package-lock.json

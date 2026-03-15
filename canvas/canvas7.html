@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="icon" type="image/x-icon" href="../images/unnamed.png">
+    <meta charset="utf-8">
+    <title>Importing Model</title>
+    <link rel="stylesheet" type="text/css" href="../css/sitestyle.css">
+    <link rel="stylesheet" type="text/css" href="../css/formstyle.css">
+    <link rel="icon" type="image/x-icon" href="../images/unnamed.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+  </head>
+  <body>
+
+    <div class="topnav" id="myNav">
+      <a href="canvas1.html">This is in my DNA</a>
+      <a href="canvas2.html">Curves</a>
+      <a href="canvas3.html">Rainbow Donuts</a>
+      <a href="canvas4.html">Building Blocks</a>
+      <a href="canvas7.html">Particles</a>
+      <a href="index.html">Home</a>
+      <a href="javascript:void(0);" class="icon" onclick="topNavFun()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+
+    <div class="model1" id="model1">
+      <script src="https://cdn.jsdelivr.net/npm/three@0.124/build/three.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.124/examples/js/controls/OrbitControls.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/exporters/GLTFExporter.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/TransformControls.js"></script>
+      
+      <scritp src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/loaders/STLLoader.js"></scritp>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/loaders/STLLoader.js"></script>
+
+      <div>
+        <script type="text/javascript" src="../js/example8.js"></script>
+      </div>
+    </div>
+
+    <button class="open-button" id="form-open-btn" onclick="openForm()">Open Form</button>
+
+    <div class="form-popup" id="myForm">
+      <form class="form-container">
+        <table>
+          <tr>
+            <td colspan="2">
+              <input type='file' accept='text/plain' onchange='openFile(event)'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="slice">Slices (min of 2):</label>
+            </td>
+            <td>
+              <input type="number" id="slice" name="slice" min="2" value="2" onchange='drawModel()'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="slice">Stack (min of 3):</label>
+            </td>
+            <td>
+              <input type="number" id="stack" name="stack" min="2" value="3" onchange='drawModel()'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="radiusSlider">Radius:</label>
+            </td>
+            <td>
+              <input type="number" id="radiusNumber" min="0.01" value="2.7"  step="0.01">
+              <input type="range" id="radiusSlider" min="0.01" value="2.7" step="0.01">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="azimuth">Azimuth:</label>
+            </td>
+            <td>
+              <input type="number" id="azimuth" name="azimuth" min="-180" max ="180" value = "0" onchange='setAzimuth()'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="polar">Polar:</label>
+            </td>
+            <td>
+              <input type="number" id="polar" name="polar" min="-180" max ="180" value = "0" onchange='setPolar()'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="twist">Twist:</label>
+            </td>
+            <td>
+              <input type="number" id="twist" name="twist" min="-180" max ="180" value = "0" onchange='setTwist()'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="cameraDistance">Camera Distance</label>
+            </td>
+            <td>
+              <input type="number" id="cameraDistanceNumber" min="0" max="500" value="50"  step="0.1">
+              <input type="range" id="cameraDistanceSlider" min="0" max="500" value="50" step="0.1">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="drawBox">Draw box</label>
+            </td>
+            <td>
+              <input type="checkbox" id="drawBox" name="drawBox">
+            </td>           
+          </tr>
+          <tr>
+            <td>
+              <label for="zeroColour">0</label>
+              <input type="color" id="zeroColour" name="zeroColour" value="#0000ff">
+              <label for="oneColour">1</label>
+              <input type="color" id="oneColour" name="oneColour" value="#ff0000">
+            </td>
+            <td>
+              <label for="twoColour">2</label>
+              <input type="color" id="twoColour" name="twoColour" value="#00ff00">
+              <label for="threeColour">3</label>
+              <input type="color" id="threeColour" name="threeColour" value="#ffff00">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="fourColour">4</label>
+              <input type="color" id="fourColour" name="fourColour" value="#00ffff">
+              <label for="fiveColour">5</label>
+              <input type="color" id="fiveColour" name="fiveColour" value="#ff00ff">
+            </td>
+            <td>
+              <label for="sixColour">6</label>
+              <input type="color" id="sixColour" name="sixColour" value="#ffffff">
+              <label for="sevenColour">7</label>
+              <input type="color" id="sevenColour" name="sevenColour" value="#999999">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="eightColour">8</label>
+              <input type="color" id="eightColour" name="eightColour" value="#444444">
+              <label for="nineColour">9</label>
+              <input type="color" id="nineColour" name="nineColour" value="#000000">
+            </td>
+            <td>
+              <input type='button' value="Perspective/Orthographic" onclick='onViewChange()'> 
+            </td>
+          </tr>
+          
+        </table>
+        <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+      </form>
+    </div>
+  </body>
+
+  <script type="text/javascript" src="../js/visualization.js"></script>
+
+  <script>
+  function topNavFun() {
+    var x = document.getElementById("myNav")
+    if (x.className === "topnav") {
+      x.className += " responsive";
+    } else {
+      x.className = "topnav";
+    }
+  }
+  </script>
+</html>

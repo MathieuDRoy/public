@@ -1,0 +1,97 @@
+html, body {
+  width: 100%;
+  margin: 0; 
+  padding: 0; 
+  overflow-x: hidden;
+}
+
+.buttD {
+  font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif; 
+  background-color: #FEFEFE;
+  color: #B38B59;
+  border-radius: 5px;
+  border:3px solid #B38B59;
+  line-height: 22px;
+  transition: all 0.3s;
+  padding: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  outline:0;
+  font-weight:500;
+  font-size: 18px;
+  font-style: normal; 
+  font-variant: normal; 
+}
+
+
+
+.topnav {
+  overflow: hidden;
+  background-color: #270c41;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.topnav a {
+  float: left;
+  color: #FEFEFE;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #FEFEFE;
+  color: #270c41;
+}
+
+.topnav a.active {
+  background-color: #B38B59;
+  color: #FEFEFE;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+
+
+a:link {
+  font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+  color: #FEFEFE;
+  background-color: transparent;
+}
+a:visited {
+  font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+  color: #FEFEFE;
+  background-color: transparent;
+  text-decoration: underline;
+}
+a:hover {
+  font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+  background-color: #FEFEFE;
+  color: #270c41;
+}
