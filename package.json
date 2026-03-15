@@ -27,8 +27,11 @@
   },
   "description": "Configuration management for the npm cli",
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@npmcli/eslint-config": "^3.0.1",
     "@npmcli/template-oss": "^4.25.1",
+    "eslint": "^9.39.4",
+    "globals": "^17.4.0",
     "tap": "^16.0.1"
   },
   "engines": {
