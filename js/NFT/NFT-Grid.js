@@ -10,7 +10,6 @@
   let filteredNFTs = [];
   let loadedCount = 0;
   let currentWallet = "";
-  let ntwTgls = document.querySelectorAll('.slider')
 
   const walletInput = document.getElementById("wallet-input");
   const useAddressBtn = document.getElementById("use-address-btn");
@@ -74,6 +73,7 @@
     disconnectBtn.style.display = "none";
     statusDiv.textContent = "Not connected";
     searchBar.style.visibility = 'hidden';
+    currentWallet = "";
   }
 
   function shorten(addr){
@@ -133,6 +133,9 @@
     //let media = nft.metadata?.animation_url || nft.media?.[0]?.gateway || nft.tokenUri?.gateway || nft.media?.[0]?.raw;
     let media;
     let animatedNFT = false;
+    if(nft.contractMetadata?.openSea?.safelistRequestStatus != "verified") return;
+    if(nft.error) return;
+    if(nft.spamInfo.isSpam == "true") return;
     if(nft.metadata?.animation_url) {
       if(nft.metadata?.animation_url == nft.metadata?.image) {
         media = nft.metadata?.image
@@ -145,9 +148,6 @@
       media = nft.media?.[0]?.gateway || nft.tokenUri?.gateway || nft.media?.[0]?.raw;
     }
     if(!media|| media === "") return;
-    if(nft.contractMetadata?.openSea?.safelistRequestStatus != "verified") return;
-    if(nft.error) return;
-    // if(nft.spamInfo.isSpam == "true") return;
     if(media.startsWith("ipfs://")) media=media.replace(/^ipfs:\/\//,"https://ipfs.io/ipfs/");
 
     const title = nft.title || `${nft.contract?.address} #${parseInt(nft.id?.tokenId||"0",16)}`;
@@ -209,6 +209,9 @@
   // --- Event listeners ---
   connectBtn.addEventListener("click", connectWallet);
   disconnectBtn.addEventListener("click", disconnectWallet);
+  ethNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
+  plyNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
+  absNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
   useAddressBtn.addEventListener("click", () => {
     const val = walletInput.value.trim();
     if(/^0x[a-fA-F0-9]{40}$/.test(val)){
@@ -230,18 +233,6 @@
     });
     container.innerHTML=""; loadedCount=0;
     displayBatch();
-  });
-
-  ntwTgls.forEach((tgl) => {
-    tgl.addEventListener("input", () => {
-      const val = walletInput.value.trim();
-      if(/^0x[a-fA-F0-9]{40}$/.test(val)){
-        currentWallet = val;
-        fetchNFTs(currentWallet);
-      } else {
-        alert("Invalid address");
-      }
-    })
   });
 
   document.getElementById("gallery-btn").addEventListener("click", () => {
