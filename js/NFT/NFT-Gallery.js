@@ -1,11 +1,17 @@
 import * as THREE from 'three';
+import Stats from 'three/examples/stats.module.js'
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import createUI from './ui.js';
+import placeOnWall from './artPlacement.js';
+import rotateForWall from './artPlacement.js';
 
 const ALCHEMY_KEY = "t3imt2oGKV9JZ8Ez7sS8s";
 const WALLETCONNECT_PROJECT_ID = "ae733e2ad1374b740d09783c00d9b1c4";
 const DEFAULT_WALLET = ""; //"0x6eeEB2b5e7744BB10b5B02334D5f7E187af391Bb";
 let currentWallet = DEFAULT_WALLET;
 let arrDataFromChain = [];
+
+let reticle = null;
 
 const walletInput = document.getElementById("wallet-input");
 const useAddressBtn = document.getElementById("use-address-btn");
@@ -14,7 +20,6 @@ const disconnectBtn = document.getElementById("disconnect-btn");
 const ethNwTgl = document.getElementById("eth-toggle");
 const plyNwTgl = document.getElementById("ply-toggle");
 const absNwTgl = document.getElementById("abs-toggle");
-
 const statusDiv = document.getElementById("status");
 const CHAIN_MAP = {
   eth: "eth-mainnet",
@@ -22,19 +27,35 @@ const CHAIN_MAP = {
   abstract: "abstract-mainnet"
 };
 
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
+const reticleGeometryParams = {
+  innerRadius : { value: 0.005, },
+  outerRadius : { value: 0.01 },
+  sides : { value: 3 },
+}
+
+const reticleColorParams = {
+  color : { value: new THREE.Color(0x00311F) }
+}
+const reticlePositionParams = {
+  posx : { value: 0 },
+  posy : { value: 0 },
+  posz : { value: -0.5 },
+  angle : { value: -Math.PI/2 }
+}
+
+createUI(reticleGeometryParams, reticleColorParams, reticlePositionParams);
+
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight*0.85);
 document.body.appendChild(renderer.domElement);
 
 // Reticle
-const reticleGeometry = new THREE.RingGeometry(0.005, 0.01, 3);
-const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00311F, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-const reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
-camera.add(reticle);
-reticle.position.set(0, 0, -0.5);
-reticle.rotation.z = -Math.PI/2;
+drawReticle();
 scene.add(camera);
 
 
@@ -117,6 +138,22 @@ const web3Modal = new window.Web3Modal.default({
 let provider;
 let web3;
 
+function drawReticle() {
+  if (reticle) {
+    camera.remove(reticle);
+    reticle.geometry.dispose();
+    reticle.material.dispose();
+    reticle = null;
+  }
+  const reticleGeometry = new THREE.RingGeometry(reticleGeometryParams.innerRadius.value, reticleGeometryParams.outerRadius.value, reticleGeometryParams.sides.value);
+  const reticleMaterial = new THREE.MeshBasicMaterial({ color: reticleColorParams.color.value, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+  camera.add(reticle);
+  reticle.position.set(reticlePositionParams.posx.value, reticlePositionParams.posy.value, reticlePositionParams.posz.value);
+  reticle.rotation.z = reticlePositionParams.angle.value;
+}
+
+
 async function connectWallet() {
   try {
     provider = await web3Modal.connect();
@@ -198,7 +235,7 @@ function placeNFTs(nfts) {
   }
 
   const texLoader = new THREE.TextureLoader();
-  let px = xCalculatedPosition(0), py = yCalculatedPosition(0,validNFTs.length), pz = zCalculatedPosition(0);
+  let px = placeOnWall('x', 0), py = placeOnWall('y', 0, validNFTs.length), pz = placeOnWall('z', 0);
   let addedNFTs = 0;
   validNFTs.forEach(nft => {
     let media;
@@ -227,13 +264,8 @@ function placeNFTs(nfts) {
         new THREE.MeshBasicMaterial({ map: texture })
       );
       plane.position.set(px, py, pz);
-      if (addedNFTs >= 12 && addedNFTs < 24) {
-        plane.rotation.y = -Math.PI/2;
-      } else if (addedNFTs >= 24 && addedNFTs < 36) {
-        plane.rotation.y = Math.PI;
-      } else if (addedNFTs >= 36 && addedNFTs < 48) {
-        plane.rotation.y = Math.PI/2;
-      }
+      plane.rotation.y = rotateForWall(addedNFTs);
+      
       scene.add(plane);
       plane.userData = {
         title: nft.raw.metadata?.name,
@@ -251,13 +283,7 @@ function placeNFTs(nfts) {
             new THREE.MeshBasicMaterial({ map: tex })
           );
           plane.position.set(px, py, pz);
-          if (addedNFTs >= 12 && addedNFTs < 24) {
-            plane.rotation.y = -Math.PI/2;
-          } else if (addedNFTs >= 24 && addedNFTs < 36) {
-            plane.rotation.y = Math.PI;
-          } else if (addedNFTs >= 36 && addedNFTs < 48) {
-            plane.rotation.y = Math.PI/2;
-          }
+          plane.rotation.y = rotateForWall(addedNFTs);
           scene.add(plane);
           plane.userData = {
             title: nft.raw.metadata?.name,
@@ -286,13 +312,7 @@ function placeNFTs(nfts) {
         new THREE.MeshBasicMaterial({ map: texture })
       );
       plane.position.set(px, py, pz);
-      if (addedNFTs >= 12 && addedNFTs < 24) {
-        plane.rotation.y = -Math.PI/2;
-      } else if (addedNFTs >= 24 && addedNFTs < 36) {
-        plane.rotation.y = Math.PI;
-      } else if (addedNFTs >= 36 && addedNFTs < 48) {
-        plane.rotation.y = Math.PI/2;
-      }      
+      plane.rotation.y = rotateForWall(addedNFTs);    
       scene.add(plane);
       plane.userData = {
         title: nft.raw.metadata?.name,
@@ -304,78 +324,18 @@ function placeNFTs(nfts) {
       console.warn("Unsupported media:", media);
     }
     addedNFTs++;
-    px = xCalculatedPosition(addedNFTs);
-    py = yCalculatedPosition(addedNFTs, validNFTs.length);
-    pz = zCalculatedPosition(addedNFTs);
+    px = placeOnWall('x', addedNFTs);
+    py = placeOnWall('y', addedNFTs, validNFTs.length);
+    pz = placeOnWall('z', addedNFTs);
   });
   animate();
-}
-
-function xCalculatedPosition(addedNFTs) {
-  if (addedNFTs < 12 ) {
-    if (addedNFTs < 6 ) {
-      return -20 + ((addedNFTs) *8);
-    } else
-      return -20 + ((addedNFTs-6) *8);
-  } else if (addedNFTs >= 12 && addedNFTs < 24) {
-    return 24.99;
-  } else if (addedNFTs >= 24 && addedNFTs < 36) {
-    if (addedNFTs >= 24 && addedNFTs < 30 ) {
-      return 20 - ((addedNFTs-24) *8);
-    } else
-      return 20 - ((addedNFTs-30) *8);
-  } else if (addedNFTs >= 36 && addedNFTs <= 48) {
-    return -24.99;
-  } 
-
-}
-function yCalculatedPosition(addedNFTs, totalNFTs) {
-  if (totalNFTs <= 6 ) {
-    return 10
-  } else {
-    if (addedNFTs < 6 ) {
-      return 7;
-    } else if (addedNFTs >= 6 && addedNFTs < 12) {
-      return 15;
-    } else if (addedNFTs >= 12 && addedNFTs < 18) {
-      return 7;
-    } else if (addedNFTs >= 18 && addedNFTs < 24) {
-      return 15;
-    } else if (addedNFTs >= 24 && addedNFTs < 30) {
-      return 7;
-    } else if (addedNFTs >= 30 && addedNFTs < 36) {
-      return 15;
-    } else if (addedNFTs >= 36 && addedNFTs < 42) {
-      return 7;
-    } else if (addedNFTs >= 42 && addedNFTs <= 48) {
-      return 15;
-    }
-  }
-}
-function zCalculatedPosition(addedNFTs) {
-  if (addedNFTs < 12 ) {
-    return -24.99;
-  } else if (addedNFTs >= 12 && addedNFTs < 24) {
-    if (addedNFTs >= 12 && addedNFTs < 18 ) {
-      return -27 + ((addedNFTs-11) * 8);
-    } else {
-      return -27 + ((addedNFTs-17) * 8);
-    }
-  } else if (addedNFTs >= 24 && addedNFTs < 36) {
-    return 24.99;
-  } else if (addedNFTs >= 36 && addedNFTs <= 48) {
-    if (addedNFTs >= 36 && addedNFTs < 42 ) {
-      return 27 - ((addedNFTs-35) * 8);
-    } else {
-      return 27 - ((addedNFTs-41) * 8);
-    }
-  }
 }
 
 // Animate
 let prev = performance.now();
 function animate() {
   requestAnimationFrame(animate);
+  stats.update();
   const now = performance.now(); const delta = (now-prev)/1000; prev = now;
   move(delta);
 
@@ -399,6 +359,7 @@ disconnectBtn.addEventListener("click", disconnectWallet);
 ethNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
 plyNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
 absNwTgl.addEventListener("change", () => fetchNFTs(currentWallet));
+walletInput.addEventListener("keypress", e => { if(e.key==="Enter") useAddressBtn.click(); });
 useAddressBtn.addEventListener("click", () => {
   const val = walletInput.value.trim();
   if(/^0x[a-fA-F0-9]{40}$/.test(val)){
@@ -409,6 +370,5 @@ useAddressBtn.addEventListener("click", () => {
   }
   document.body.addEventListener('click', () => controls.lock());
 });
-walletInput.addEventListener("keypress", e => { if(e.key==="Enter") useAddressBtn.click(); });
 
 animate();
