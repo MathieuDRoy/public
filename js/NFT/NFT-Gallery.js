@@ -53,9 +53,8 @@ const materialWood = new THREE.MeshPhongMaterial({map: textureWood});
 textureWood.colorSpace = THREE.SRGBColorSpace;
 textureWood.anisotropy = maxAnisotropy;
 textureWood.wrapS = textureWood.wrapT = THREE.RepeatWrapping;
-//textureWood.repeat.set( 580, 387 );
 
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(50,50), materialWood);//new THREE.MeshPhongMaterial({color:0x00311F}));
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(50,50), materialWood);
 floor.rotation.x = -Math.PI/2; scene.add(floor);
 const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshPhongMaterial({color:0xFFFFFF}));
 ceiling.rotation.x = Math.PI/2; ceiling.position.set(0,20,0); scene.add(ceiling);
@@ -71,14 +70,12 @@ frontWall.rotation.y = Math.PI; frontWall.position.set(0,10,25); scene.add(front
 
 // Controls
 const controls = new PointerLockControls(camera, document.body);
-//document.body.addEventListener('click', () => controls.lock());
 camera.position.set(0, 10, 5);
 
 // Hover
 const raycaster = new THREE.Raycaster();
 const infoBox = document.getElementById("info");
 let nftMeshes = [];
-//let nftFrames = [];
 
 const keys = {};
 document.addEventListener("keydown", e => keys[e.code]=true);
@@ -171,8 +168,6 @@ async function fetchNFTs(wallet) {
 
   nftMeshes.forEach(m => scene.remove(m));
   nftMeshes = [];
-  // nftFrames.forEach(f => scene.remove(f));
-  // nftFrames = [];
   let nfts = [];
 
   if(ethNwTgl.checked)
@@ -312,11 +307,6 @@ function placeNFTs(nfts) {
     px = xCalculatedPosition(addedNFTs);
     py = yCalculatedPosition(addedNFTs, validNFTs.length);
     pz = zCalculatedPosition(addedNFTs);
-    console.log(addedNFTs + " - px: " + px + " py: " + py + " pz: " + pz);
-
-
-    // x += 8;
-    // if(x > 20){ x = -20; y += 8; }
   });
   animate();
 }
@@ -417,8 +407,8 @@ useAddressBtn.addEventListener("click", () => {
   } else {
     alert("Invalid address");
   }
+  document.body.addEventListener('click', () => controls.lock());
 });
 walletInput.addEventListener("keypress", e => { if(e.key==="Enter") useAddressBtn.click(); });
-//loadMoreBtn.addEventListener("click", displayBatch);
 
 animate();
