@@ -1,5 +1,5 @@
-export default function placeOnWall(coordinate, index, count) {
-    if(coordinate === 'x') {
+function placeOnWall(coordinate, index, count, nft) {
+    if(coordinate === "x") {
         if (index < 12 ) {
             if (index < 6 ) {
             return -20 + ((index) *8);
@@ -15,7 +15,7 @@ export default function placeOnWall(coordinate, index, count) {
         } else if (index >= 36 && index <= 48) {
             return -24.99;
         } 
-    } else if (coordinate === 'y') {
+    } else if (coordinate === "y") {
         if (count <= 6 ) {
             return 10
         } else {
@@ -37,7 +37,7 @@ export default function placeOnWall(coordinate, index, count) {
             return 15;
             }
         }
-    } else if (coordinate === 'z') {
+    } else if (coordinate === "z") {
         if (index < 12 ) {
             return -24.99;
         } else if (index >= 12 && index < 24) {
@@ -56,7 +56,7 @@ export default function placeOnWall(coordinate, index, count) {
             }
         }
     } else {
-        console.error("Invalid coordinate specified. Must be 'x', 'y', or 'z'.");
+        console.error("Invalid coordinate specified. Must be 'x', 'y', or 'z'. " + index + " " + coordinate + " " + count + " " + nft);
         return null;
     }
 }

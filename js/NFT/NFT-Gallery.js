@@ -1,9 +1,7 @@
 import * as THREE from 'three';
-import Stats from 'three/examples/stats.module.js'
+// import Stats from 'three/examples/stats.module.js'
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-import createUI from './ui.js';
-import placeOnWall from './artPlacement.js';
-import rotateForWall from './artPlacement.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 const ALCHEMY_KEY = "t3imt2oGKV9JZ8Ez7sS8s";
 const WALLETCONNECT_PROJECT_ID = "ae733e2ad1374b740d09783c00d9b1c4";
@@ -27,44 +25,29 @@ const CHAIN_MAP = {
   abstract: "abstract-mainnet"
 };
 
-const stats = new Stats()
-document.body.appendChild(stats.dom)
-
-const reticleGeometryParams = {
-  innerRadius : { value: 0.005, },
-  outerRadius : { value: 0.01 },
-  sides : { value: 3 },
-}
-
-const reticleColorParams = {
-  color : { value: new THREE.Color(0x00311F) }
-}
-const reticlePositionParams = {
-  posx : { value: 0 },
-  posy : { value: 0 },
-  posz : { value: -0.5 },
-  angle : { value: -Math.PI/2 }
-}
-
-createUI(reticleGeometryParams, reticleColorParams, reticlePositionParams);
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight*0.85);
 document.body.appendChild(renderer.domElement);
 
-// Reticle
-drawReticle();
-scene.add(camera);
+// const stats = new Stats()
+// document.body.appendChild(stats.dom)
 
+// Reticle
+const reticleGeometry = new THREE.RingGeometry(0.005, 0.01, 3);
+const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00311F, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+camera.add(reticle);
+reticle.position.set(0, 0, -0.5);
+reticle.rotation.z = -Math.PI/2 ;
+scene.add(camera);
 
 // Lights
 scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
 dirLight.position.set(5, 10, 7).normalize();
 scene.add(dirLight);
-
 
 // Gallery room
 const textureLoader = new THREE.TextureLoader();
@@ -98,6 +81,7 @@ const raycaster = new THREE.Raycaster();
 const infoBox = document.getElementById("info");
 let nftMeshes = [];
 
+// Movement
 const keys = {};
 document.addEventListener("keydown", e => keys[e.code]=true);
 document.addEventListener("keyup", e => keys[e.code]=false);
@@ -137,22 +121,6 @@ const web3Modal = new window.Web3Modal.default({
 
 let provider;
 let web3;
-
-function drawReticle() {
-  if (reticle) {
-    camera.remove(reticle);
-    reticle.geometry.dispose();
-    reticle.material.dispose();
-    reticle = null;
-  }
-  const reticleGeometry = new THREE.RingGeometry(reticleGeometryParams.innerRadius.value, reticleGeometryParams.outerRadius.value, reticleGeometryParams.sides.value);
-  const reticleMaterial = new THREE.MeshBasicMaterial({ color: reticleColorParams.color.value, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-  reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
-  camera.add(reticle);
-  reticle.position.set(reticlePositionParams.posx.value, reticlePositionParams.posy.value, reticlePositionParams.posz.value);
-  reticle.rotation.z = reticlePositionParams.angle.value;
-}
-
 
 async function connectWallet() {
   try {
@@ -202,7 +170,6 @@ async function getNFTsByChain(chain, wallet) {
 }
 
 async function fetchNFTs(wallet) {
-
   nftMeshes.forEach(m => scene.remove(m));
   nftMeshes = [];
   let nfts = [];
@@ -228,24 +195,20 @@ function isImage(url) {
 function placeNFTs(nfts) {  
   let validNFTs = [];
   for (let i = 0; i<nfts.length; i++) {
-    if(nfts[i].contract.isSpam == true || nfts[i].contract.totalSupply == null || nfts[i].contract.openSeaMetadata.safelistRequestStatus != "verified") {
-      continue;
-    };
+    if(nfts[i].contract.isSpam == true || nfts[i].contract.totalSupply == null || nfts[i].contract.openSeaMetadata.safelistRequestStatus != "verified") { continue; };
     validNFTs.push(nfts[i]);
   }
 
   const texLoader = new THREE.TextureLoader();
-  let px = placeOnWall('x', 0), py = placeOnWall('y', 0, validNFTs.length), pz = placeOnWall('z', 0);
   let addedNFTs = 0;
-  validNFTs.forEach(nft => {
+  let plane; 
+  const count = validNFTs.length;
+  validNFTs.forEach(nft => {    
     let media;
     media =
       nft.animation?.cachedUrl ||
-      nft.image?.cachedUrl ||
-      nft.image?.thumbnailUrl ||
-      nft.image?.pngUrl ||
-      nft.raw?.metadata?.image ||
-      nft.raw?.metadata?.image_url;
+      nft.image?.cachedUrl || nft.image?.thumbnailUrl || nft.image?.pngUrl ||
+      nft.raw?.metadata?.image || nft.raw?.metadata?.image_url;
 
     if (isVideo(media)) {
       const video = document.createElement("video");
@@ -257,40 +220,20 @@ function placeNFTs(nfts) {
       video.autoplay = true;
 
       video.play().catch(err => console.error("Video play failed:", err));
-
       const texture = new THREE.VideoTexture(video);
-      const plane = new THREE.Mesh(
+      plane = new THREE.Mesh(
         new THREE.PlaneGeometry(6, 6),
         new THREE.MeshBasicMaterial({ map: texture })
       );
-      plane.position.set(px, py, pz);
-      plane.rotation.y = rotateForWall(addedNFTs);
-      
-      scene.add(plane);
-      plane.userData = {
-        title: nft.raw.metadata?.name,
-        desc: nft.raw.metadata?.description || "",
-        traits: nft.raw.metadata?.attributes || []
-      };
-
-      nftMeshes.push(plane);
+ 
     } else if (isImage(media)) {
       texLoader.load(
         media,
         tex => {
-          const plane = new THREE.Mesh(
+          plane = new THREE.Mesh(
             new THREE.PlaneGeometry(6, 6),
             new THREE.MeshBasicMaterial({ map: tex })
           );
-          plane.position.set(px, py, pz);
-          plane.rotation.y = rotateForWall(addedNFTs);
-          scene.add(plane);
-          plane.userData = {
-            title: nft.raw.metadata?.name,
-            desc: nft.raw.metadata?.description || "",
-            traits: nft.raw.metadata?.attributes || []
-          };
-          nftMeshes.push(plane);
         },
         undefined,
         err => console.error("Texture load failed:", media, err)
@@ -305,28 +248,28 @@ function placeNFTs(nfts) {
       video.autoplay = true;
 
       video.play().catch(err => console.error("Other media failed:", err));
-
       const texture = new THREE.VideoTexture(video);
-      const plane = new THREE.Mesh(
+      plane = new THREE.Mesh(
         new THREE.PlaneGeometry(6, 6),
         new THREE.MeshBasicMaterial({ map: texture })
       );
-      plane.position.set(px, py, pz);
-      plane.rotation.y = rotateForWall(addedNFTs);    
-      scene.add(plane);
-      plane.userData = {
-        title: nft.raw.metadata?.name,
-        desc: nft.raw.metadata?.description || "",
-        traits: nft.raw.metadata?.attributes || []
-      };
-      nftMeshes.push(plane);
     } else {
       console.warn("Unsupported media:", media);
+      return;
     }
+
+    let px = placeOnWall("x", addedNFTs, count, nft), py = placeOnWall("y", addedNFTs, count, nft), pz = placeOnWall("z", addedNFTs, count, nft);
+    plane.position.set(px, py, pz);
+    plane.rotation.y = rotateForWall(addedNFTs);    
+    scene.add(plane);
+    plane.userData = {
+      title: nft.raw.metadata?.name,
+      desc: nft.raw.metadata?.description || "",
+      traits: nft.raw.metadata?.attributes || []
+    };
+    nftMeshes.push(plane);
+
     addedNFTs++;
-    px = placeOnWall('x', addedNFTs);
-    py = placeOnWall('y', addedNFTs, validNFTs.length);
-    pz = placeOnWall('z', addedNFTs);
   });
   animate();
 }
@@ -335,7 +278,7 @@ function placeNFTs(nfts) {
 let prev = performance.now();
 function animate() {
   requestAnimationFrame(animate);
-  stats.update();
+  //stats.update();
   const now = performance.now(); const delta = (now-prev)/1000; prev = now;
   move(delta);
 
